@@ -1,20 +1,11 @@
-from flask import Flask
-from flask_mongoengine import MongoEngine
-from flask_jwt_extended import JWTManager
-from flask_bcrypt import Bcrypt
-
-app = Flask(__name__)
-
-# MongoDB Configuration
-app.config['MONGODB_SETTINGS'] = {
-    'db': 'health_monitoring',
-    'host': 'mongodb://localhost:27017/health_monitoring'
-}
-db = MongoEngine(app)
-
-# JWT Configuration
-app.config['JWT_SECRET_KEY'] = 'your-secret-key'
-jwt = JWTManager(app)
-
-# Bcrypt Configuration
-bcrypt = Bcrypt(app)
+from pymongo.mongo_client import MongoClient
+from pymongo.server_api import ServerApi
+uri = "mongodb+srv://rishinpandit98:<password>@digicare1.8nanjpo.mongodb.net/?retryWrites=true&w=majority&appName=digicare1"
+# Create a new client and connect to the server
+client = MongoClient(uri, server_api=ServerApi('1'))
+# Send a ping to confirm a successful connection
+try:
+    client.admin.command('ping')
+    print("Pinged your deployment. You successfully connected to MongoDB!")
+except Exception as e:
+    print(e)
