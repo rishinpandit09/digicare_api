@@ -4,6 +4,7 @@ from flask import abort
 
 from app.models.alert import Alert
 
+
 class AlertResource(Resource):
     @jwt_required()
     def get(self, alert_id):

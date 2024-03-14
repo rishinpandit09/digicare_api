@@ -9,3 +9,7 @@ class Patient(Document):
     contact_info = fields.DictField()
     medical_history = fields.ListField(fields.DictField())
     doctors = fields.ListField(fields.ReferenceField('Doctor'))
+
+    # Patient authentication fields
+    username = fields.StringField(required=True, unique=True)
+    password = fields.StringField(required=True)

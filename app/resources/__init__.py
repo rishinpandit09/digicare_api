@@ -1,0 +1,5 @@
+from .patient_resource import PatientResource
+from .doctor_resource import DoctorResource
+from .alert_resource import AlertResource
+from .teleconsultation_resource import TeleconsultationResource
+from .health_record_resource import HealthRecordResource

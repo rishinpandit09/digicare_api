@@ -1,7 +1,5 @@
-from flask import Flask
 from flask_restful import Api
-
-from .utils.config import app
+from app import app
 from .resources.patient_resource import PatientResource
 from .resources.doctor_resource import DoctorResource
 from .resources.alert_resource import AlertResource
@@ -19,3 +17,7 @@ api.add_resource(HealthRecordResource, '/health_records')
 
 if __name__ == '__main__':
     app.run(debug=True)
+# from app import app
+#
+# if __name__ == '__main__':
+#     app.run(debug=True)

@@ -1,9 +1,9 @@
-from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
+from flask_jwt_extended import create_access_token, get_jwt_identity
 from flask_restful import reqparse, abort
 from app.models.patient import Patient
 from app.models.doctor import Doctor
 from flask_bcrypt import Bcrypt
-
+from werkzeug.security import generate_password_hash, check_password_hash
 bcrypt = Bcrypt()
 
 def create_token(identity):
@@ -18,9 +18,9 @@ def verify_password(user_type, username, password):
         user = None
 
         if user_type.lower() == 'patient':
-            user = Patient.objects(name=username).first()
+            user = Patient.objects(name=username).username()
         elif user_type.lower() == 'doctor':
-            user = Doctor.objects(name=username).first()
+            user = Doctor.objects(name=username).username()
 
         if user and bcrypt.check_password_hash(user.password, password):
             return True
@@ -54,7 +54,7 @@ def identity():
         abort(500, message=f"Error identifying user: {str(e)}")
 
 def password_hash(password):
-    try:
-        return bcrypt.generate_password_hash(password).decode('utf-8')
-    except Exception as e:
-        abort(500, message=f"Error hashing password: {str(e)}")
+    return generate_password_hash(password)
+
+def password_check(password_hash, password):
+    return check_password_hash(password_hash, password)
