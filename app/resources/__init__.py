@@ -3,3 +3,7 @@ from .doctor_resource import DoctorResource
 from .alert_resource import AlertResource
 from .teleconsultation_resource import TeleconsultationResource
 from .health_record_resource import HealthRecordResource
+from .doctorLogin import DoctorLogin
+from .doctorRegistration import DoctorRegistration
+from .patientLogin import PatientLogin
+from .patientRegistration import PatientRegistration

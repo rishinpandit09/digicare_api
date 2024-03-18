@@ -4,16 +4,17 @@ from flask import abort
 
 from app.models.teleconsultation import Teleconsultation
 
+
 class TeleconsultationResource(Resource):
-    @jwt_required()
+    # @jwt_required()
     def get(self, teleconsultation_id):
         try:
-            teleconsultation = Teleconsultation.objects.get(id=teleconsultation_id)
-            return {'data': teleconsultation.to_json()}
-        except Teleconsultation.DoesNotExist:
-            abort(404, message="Teleconsultation not found")
+            teleconsultation = Teleconsultation.get_teleconsultation_by_id(teleconsultation_id)
+            return {'data': teleconsultation}
+        except Exception as e:
+            abort(500, message=str(e))
 
-    @jwt_required()
+    # @jwt_required()
     def post(self):
         parser = reqparse.RequestParser()
         parser.add_argument('patient_id', type=str, required=True)
@@ -23,13 +24,13 @@ class TeleconsultationResource(Resource):
         args = parser.parse_args()
 
         try:
-            new_teleconsultation = Teleconsultation(**args)
-            new_teleconsultation.save()
-            return {'message': 'Teleconsultation created successfully', 'data': new_teleconsultation.to_json()}
+            new_teleconsultation = Teleconsultation()
+            response = new_teleconsultation.create_teleconsultation(**args)
+            return {'message': 'Teleconsultation created successfully', 'data': response}
         except Exception as e:
-            return {'message': f'Error creating teleconsultation: {str(e)}'}, 500
+            abort(500, message=str(e))
 
-    @jwt_required()
+    # @jwt_required()
     def put(self, teleconsultation_id):
         parser = reqparse.RequestParser()
         parser.add_argument('patient_id', type=str, required=True)
@@ -39,21 +40,23 @@ class TeleconsultationResource(Resource):
         args = parser.parse_args()
 
         try:
-            teleconsultation = Teleconsultation.objects.get(id=teleconsultation_id)
-            teleconsultation.update(**args)
-            return {'message': 'Teleconsultation updated successfully', 'data': teleconsultation.to_json()}
-        except Teleconsultation.DoesNotExist:
-            abort(404, message="Teleconsultation not found")
+            teleconsultation = Teleconsultation.get_teleconsultation_by_id(teleconsultation_id)
+            if teleconsultation:
+                response = teleconsultation.update_teleconsultation(**args)
+                return {'message': 'Teleconsultation updated successfully', 'data': response}
+            else:
+                abort(404, message="Teleconsultation not found")
         except Exception as e:
-            return {'message': f'Error updating teleconsultation: {str(e)}'}, 500
+            abort(500, message=str(e))
 
-    @jwt_required()
+    # @jwt_required()
     def delete(self, teleconsultation_id):
         try:
-            teleconsultation = Teleconsultation.objects.get(id=teleconsultation_id)
-            teleconsultation.delete()
-            return {'message': 'Teleconsultation deleted successfully'}
-        except Teleconsultation.DoesNotExist:
-            abort(404, message="Teleconsultation not found")
+            teleconsultation = Teleconsultation.get_teleconsultation_by_id(teleconsultation_id)
+            if teleconsultation:
+                response = teleconsultation.delete_teleconsultation()
+                return {'message': 'Teleconsultation deleted successfully', 'data': response}
+            else:
+                abort(404, message="Teleconsultation not found")
         except Exception as e:
-            return {'message': f'Error deleting teleconsultation: {str(e)}'}, 500
+            abort(500, message=str(e))
