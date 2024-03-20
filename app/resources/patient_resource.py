@@ -8,26 +8,15 @@ from app.models.patient import Patient
 class PatientResource(Resource):
 
     # @jwt_required()
-    def get(self, patient_id=None):
-        if patient_id:
-            # Retrieve patient by ID
-            try:
-                patient = Patient.get_patient_by_username(patient_id)
-                if patient:
-                    return {'data': patient}
-                else:
-                    abort(404, message="Patient not found")
-            except Exception as e:
-                return {'message': f'Error retrieving patient: {str(e)}'}, 500
-        else:
-            # Retrieve all patients
-            try:
-                patients = Patient.get_all_patients()
-                return {'data': patients}
-            except Exception as e:
-                return {'message': f'Error retrieving patients: {str(e)}'}, 500
+    def get(self, username):
+        try:
+            patient = Patient.get_patient_by_username(username)
+            return {'data': patient}
+        except ValueError as e:
+            abort(400, message=str(e))
+        except Exception as e:
+            abort(500, message=str(e))
 
-    # @jwt_required()
     def post(self):
         parser = reqparse.RequestParser()
         parser.add_argument('name', type=str, required=True)
@@ -42,16 +31,18 @@ class PatientResource(Resource):
             return {'message': f'Error creating patient: {str(e)}'}, 500
 
     # @jwt_required()
-    def put(self, patient_id):
+    def put(self, username):
         parser = reqparse.RequestParser()
-        parser.add_argument('name', type=str, required=True)
+        parser.add_argument('contact_number', type=str, required=True)
+        parser.add_argument('email', type=str, required=True)
+        parser.add_argument('DOB', type=str, required=True)
+        parser.add_argument('address', type=str, required=True)
         args = parser.parse_args()
-
         try:
-            patient = Patient.get_patient_by_username(patient_id)
-            if patient:
-                patient.update_patient(**args)
-                return {'message': 'Patient updated successfully', 'data': patient}
+            patient = Patient.get_patient_by_username(username)
+            if patient is not None:
+                response = Patient.update_doctors(username, **args)
+                return {'message': 'Patient updated successfully', 'data': response}
             else:
                 abort(404, message="Patient not found")
         except Exception as e:
