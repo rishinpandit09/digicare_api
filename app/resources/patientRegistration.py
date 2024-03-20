@@ -5,13 +5,15 @@ from app.models.patient import Patient
 class PatientRegistration(Resource):
     def post(self):
         parser = reqparse.RequestParser()
+        parser.add_argument('user_name', type=str, required=True)
         parser.add_argument('name', type=str, required=True)
-        parser.add_argument('dob', type=str, required=True)
-        parser.add_argument('gender', type=str, choices=['Male', 'Female', 'Other'], required=True)
-        parser.add_argument('contact_info', type=dict, required=True)
-        parser.add_argument('medical_history', type=list, required=True)
+        parser.add_argument('contact_number', type=str, required=True)
+        parser.add_argument('email', type=str, required=True)
+        parser.add_argument('role', type=str, required=True)
+        parser.add_argument('DOB', type=str, required=True)
+        parser.add_argument('gender', type=str, required=True)
+        parser.add_argument('address', type=str, required=True)
         parser.add_argument('doctors', type=list, required=True)
-        parser.add_argument('username', type=str, required=True)
         parser.add_argument('password', type=str, required=True)
         args = parser.parse_args()
 

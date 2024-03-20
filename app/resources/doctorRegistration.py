@@ -5,12 +5,21 @@ from app.models.doctor import Doctor
 class DoctorRegistration(Resource):
     def post(self):
         parser = reqparse.RequestParser()
+        parser.add_argument('user_name', type=str, required=True)
         parser.add_argument('name', type=str, required=True)
-        parser.add_argument('specialization', type=str, required=True)
-        parser.add_argument('contact_info', type=dict, required=True)
-        parser.add_argument('username', type=str, required=True)
-        parser.add_argument('password', type=str, required=True)
+        parser.add_argument('contact_number', type=str, required=True)
+        parser.add_argument('email', type=str, required=True)
+        parser.add_argument('role', type=str, required=True)
+        parser.add_argument('DOB', type=str, required=True)
+        parser.add_argument('gender', type=str, required=True)
+        parser.add_argument('address', type=str, required=True)
+        parser.add_argument('start_year_of_practice', type=str, required=True)
+        parser.add_argument('availability_hours', type=list, required=True)
+        parser.add_argument('specialization', type=list, required=True)
+        parser.add_argument('study_history', type=list, required=True)
         parser.add_argument('patients', type=list, required=True)
+        parser.add_argument('password', type=str, required=True)
+        parser.add_argument('Hospital', type=str, required=True)
         args = parser.parse_args()
 
         try:

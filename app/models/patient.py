@@ -1,3 +1,4 @@
+import decimal
 import os
 
 import boto3
@@ -7,7 +8,7 @@ from app.utils.auth import password_hash
 aws_region = os.getenv('AWS_DEFAULT_REGION')
 
 dynamodb = boto3.resource('dynamodb',region_name=aws_region)
-global_table = dynamodb.Table('patients')
+global_table = dynamodb.Table('Patients')
 
 
 class Patient:
@@ -15,16 +16,19 @@ class Patient:
         self.table = global_table
         self.deserializer = TypeDeserializer()
 
-    def create_patient(self, name, dob, gender, contact_info, medical_history, doctors, username, password):
+    def create_patient(self, user_name, name, contact_number, email, role, DOB,
+                       gender, address, doctors, password):
         hashed_password = password_hash(password)
         item = {
+            "user_name": user_name,
             "name": name,
-            "dob": str(dob),
+            "contact_number": contact_number,
+            "email": email,
+            "role": role,
+            "DOB": DOB,
             "gender": gender,
-            "contact_info": contact_info,
-            "medical_history": medical_history,
+            "address": address,
             "doctors": doctors,
-            "username": username,
             "password": hashed_password
         }
         response = global_table.put_item(Item=item)
@@ -33,7 +37,7 @@ class Patient:
     @classmethod
     def get_patient_by_username(cls, username):
         response = global_table.query(
-            KeyConditionExpression="username = :val",
+            KeyConditionExpression="user_name = :val",
             ExpressionAttributeValues={
                 ":val": username
             }
@@ -49,11 +53,36 @@ class Patient:
             return {key: cls.deserialize(value) for key, value in item.items()}
         elif isinstance(item, list):
             return [cls.deserialize(value) for value in item]
+        elif isinstance(item, decimal.Decimal):
+            return float(item)  # Convert Decimal to float
         else:
             return item
 
     @classmethod
-    def get_all_patients(cls):
-        response = global_table.scan()
-        items = response.get('Items', [])
-        return [cls().deserialize(item) for item in items]
+    def update_doctors(cls, username, **kwargs):
+        # Fetch the doctor object by username
+        patient = cls.get_patient_by_username(username)
+        if not patient:
+            return {'message': 'Patient not found'}
+
+        # Update the patient object with the provided attributes
+        for key, value in kwargs.items():
+            if key in patient:
+                # Convert float values to Decimal
+                if isinstance(value, float):
+                    value = decimal.Decimal(str(value))
+                patient[key] = value
+            else:
+                return {'message': f'Attribute {key} does not exist'}
+
+        # Print the patient object for debugging
+        print("Updated Patient Object:", patient)
+
+        # Save the updated patient object to the database
+        try:
+            response = cls().table.put_item(Item=patient)
+            return {'message': 'Patient updated successfully', 'data': response}
+        except Exception as e:
+            # Handle any exceptions that may occur during the database operation
+            return {'message': 'Failed to update patient', 'error': str(e)}
+

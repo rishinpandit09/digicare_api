@@ -6,6 +6,7 @@ import os
 from flask_restful_swagger_2 import Api as SwaggerApi
 import boto3
 from app.resources import PatientRegistration, PatientLogin, DoctorRegistration, DoctorLogin
+from app.resources.DoctorPatient import DoctorPatientResource
 
 # Load environment variables from .env file
 load_dotenv()
@@ -50,14 +51,16 @@ from app.resources.alert_resource import AlertResource
 from app.resources.teleconsultation_resource import TeleconsultationResource
 from app.resources.health_record_resource import HealthRecordResource
 
-api.add_resource(PatientResource, '/api/patient')
-api.add_resource(DoctorResource, '/api/doctor')
+api.add_resource(PatientResource, '/api/patient/<username>')
+api.add_resource(DoctorResource, '/api/doctor/<username>')
 api.add_resource(AlertResource, '/api/alert')
 api.add_resource(TeleconsultationResource, '/api/teleconsultation')
-api.add_resource(HealthRecordResource, '/api/health-record')
+api.add_resource(HealthRecordResource, '/api/health-record/<username>')
+# api.add_resource(HealthRecordResource, '/api/health-record/latest/<username>')
 api.add_resource(PatientRegistration, '/api/register-patient')
 api.add_resource(PatientLogin, '/api/patient-login')
 api.add_resource(DoctorRegistration, '/api/register-doctor')
 api.add_resource(DoctorLogin, '/api/doctor-login')
 api.add_resource(DynamoDBConnection, '/check_dynamodb_connection')
 swagger = SwaggerApi(app, api_spec_url='/apidocs')
+api.add_resource(DoctorPatientResource, '/api/doctorpatientrelation/<username>')
