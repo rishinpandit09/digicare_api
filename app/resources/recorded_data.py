@@ -1,7 +1,9 @@
 from flask_restful import Resource, reqparse
-from flask import abort
+from flask import abort, request
 from app.models.record import RecordedData
 from uuid import uuid4
+from simulation import HealthRecorder
+import tkinter as tk
 
 
 class RecordedDataResource(Resource):
@@ -16,21 +18,21 @@ class RecordedDataResource(Resource):
         except Exception as e:
             abort(500)
 
-    def post(self,username):
+    def post(self, username):
         parser = reqparse.RequestParser()
         parser.add_argument('patient_username', type=str, required=True)
         parser.add_argument('timestamp', type=str, required=True)
         parser.add_argument('blood_pressure', type=str, required=True)
         parser.add_argument('heart_rate', type=str, required=True)
         parser.add_argument('o2', type=str, required=True)
-        parser.add_argument('sugar_level', type=str, required=True)
-        args = parser.parse_args()
+        parser.add_argument('temperature', type=str, required=True)
+        args = request.get_json()
 
         try:
             record_id = str(uuid4())
             new_record = RecordedData()
             response = new_record.create_record(record_id, **args)
-            return {'message': 'Record created successfully', 'data': response}
+            # return {'message': 'Record created successfully', 'data': response}
         except Exception as e:
             abort(500, message=str(e))
 
