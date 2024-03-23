@@ -50,7 +50,8 @@ from app.resources.doctor_resource import DoctorResource
 from app.resources.alert_resource import AlertResource
 from app.resources.teleconsultation_resource import TeleconsultationResource
 from app.resources.health_record_resource import HealthRecordResource
-
+from app.resources.recorded_data import RecordedDataResource
+from app.resources.latest_record import LatestRecord
 api.add_resource(PatientResource, '/api/patient/<username>')
 api.add_resource(DoctorResource, '/api/doctor/<username>')
 api.add_resource(AlertResource, '/api/alert')
@@ -64,3 +65,5 @@ api.add_resource(DoctorLogin, '/api/doctor-login')
 api.add_resource(DynamoDBConnection, '/check_dynamodb_connection')
 swagger = SwaggerApi(app, api_spec_url='/apidocs')
 api.add_resource(DoctorPatientResource, '/api/doctorpatientrelation/<username>')
+api.add_resource(RecordedDataResource, '/api/record-data/<username>')
+api.add_resource(LatestRecord, '/api/latest-record/<username>')
