@@ -7,3 +7,5 @@ from .doctorLogin import DoctorLogin
 from .doctorRegistration import DoctorRegistration
 from .patientLogin import PatientLogin
 from .patientRegistration import PatientRegistration
+from .recorded_data import RecordedDataResource
+from .latest_record import LatestRecord
