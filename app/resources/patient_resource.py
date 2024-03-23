@@ -41,7 +41,7 @@ class PatientResource(Resource):
         try:
             patient = Patient.get_patient_by_username(username)
             if patient is not None:
-                response = Patient.update_doctors(username, **args)
+                response = Patient.update_patient(username, **args)
                 return {'message': 'Patient updated successfully', 'data': response}
             else:
                 abort(404, message="Patient not found")

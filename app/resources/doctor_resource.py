@@ -1,6 +1,6 @@
 from flask_restful import Resource, reqparse
 from flask_jwt_extended import jwt_required
-from flask import abort
+from flask import abort, request
 
 from app.models.doctor import Doctor
 
@@ -39,13 +39,13 @@ class DoctorResource(Resource):
     # @jwt_required()
     def put(self, username):
         parser = reqparse.RequestParser()
-        parser.add_argument('specialization', type=list, required=True)
-        parser.add_argument('address', type=str, required=True)
-        parser.add_argument('study_history', type=list, required=True)
-        parser.add_argument('contact_number', type=str, required=True)
-        parser.add_argument('availability_hours', type=list, required=True)
-        parser.add_argument('Hospital', type=str, required=True)
-        args = parser.parse_args()
+        parser.add_argument('specialization', type=list, required=False)
+        parser.add_argument('address', type=str, required=False)
+        parser.add_argument('study_history', type=list, required=False)
+        parser.add_argument('contact_number', type=str, required=False)
+        parser.add_argument('availability_hours', type=list, required=False)
+        parser.add_argument('Hospital', type=str, required=False)
+        args = request.get_json()
 
         try:
             doctor = Doctor.get_doctor_by_username(username)
