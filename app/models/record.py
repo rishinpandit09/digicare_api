@@ -3,6 +3,7 @@ import decimal
 import boto3
 from boto3.dynamodb.conditions import Key
 from boto3.dynamodb.types import TypeDeserializer
+from simulation import HealthRecorder
 
 dynamodb = boto3.resource('dynamodb')
 global_table = dynamodb.Table('Recorded_Data')
@@ -13,7 +14,7 @@ class RecordedData:
         self.table = global_table
         self.deserializer = TypeDeserializer()
 
-    def create_record(self, record_id, patient_username, timestamp, blood_pressure, heart_rate, o2, sugar_level):
+    def create_record(self, record_id, patient_username, timestamp, blood_pressure, heart_rate, o2, temperature):
         item = {
             "record_id": record_id,
             "patient_username": patient_username,
@@ -21,7 +22,7 @@ class RecordedData:
             "blood_pressure": blood_pressure,
             "heart_rate": heart_rate,
             "o2": o2,
-            "sugar_level": sugar_level
+            "sugar_level": temperature
         }
         response = self.table.put_item(Item=item)
         return response
@@ -74,3 +75,7 @@ class RecordedData:
             latest_record = cls.deserialize(sorted_items[0])
             return latest_record
         return None
+
+    # @classmethod
+    # def generate_latest_record_data(cls):
+    #     return HealthRecorder.send_recorded_parameters()
