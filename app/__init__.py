@@ -6,14 +6,23 @@ import os
 from flask_restful_swagger_2 import Api as SwaggerApi
 import boto3
 from app.resources import PatientRegistration, PatientLogin, DoctorRegistration, DoctorLogin
-from app.resources.DoctorPatient import DoctorPatientResource
-
+from flask_cors import CORS
 # Load environment variables from .env file
 load_dotenv()
 
 # Configure Flask application
 app = Flask(__name__)
-
+CORS(app)
+CORS(
+    app,
+    resources={
+        r"/*": {
+            "origins": "*",
+            "supports_credentials": True,
+            "Access-Control-Allow-Credentials": True,
+        }
+    },
+)
 # Configure JWT secret key
 app.config['JWT_SECRET_KEY'] = '123456789'  # Change this to a random secret key
 jwt = JWTManager(app)
@@ -50,8 +59,13 @@ from app.resources.doctor_resource import DoctorResource
 from app.resources.alert_resource import AlertResource
 from app.resources.teleconsultation_resource import TeleconsultationResource
 from app.resources.health_record_resource import HealthRecordResource
+from app.resources.DoctorPatient import DoctorPatientResource
+from app.resources.getAllRecords import PatientAllResources, DoctorAllResources
 from app.resources.recorded_data import RecordedDataResource
 from app.resources.latest_record import LatestRecord
+
+api.add_resource(PatientAllResources, '/api/patient')
+api.add_resource(DoctorAllResources, '/api/doctors')
 api.add_resource(PatientResource, '/api/patient/<username>')
 api.add_resource(DoctorResource, '/api/doctor/<username>')
 api.add_resource(AlertResource, '/api/alert')
@@ -63,7 +77,7 @@ api.add_resource(PatientLogin, '/api/patient-login')
 api.add_resource(DoctorRegistration, '/api/register-doctor')
 api.add_resource(DoctorLogin, '/api/doctor-login')
 api.add_resource(DynamoDBConnection, '/check_dynamodb_connection')
-swagger = SwaggerApi(app, api_spec_url='/apidocs')
-api.add_resource(DoctorPatientResource, '/api/doctorpatientrelation/<username>')
+api.add_resource(DoctorPatientResource, '/api/doctorpatientrelation')
 api.add_resource(RecordedDataResource, '/api/record-data/<username>')
 api.add_resource(LatestRecord, '/api/latest-record/<username>')
+swagger = SwaggerApi(app, api_spec_url='/apidocs')

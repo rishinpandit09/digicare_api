@@ -14,7 +14,7 @@ class Doctor:
         self.deserializer = TypeDeserializer()
 
     def create_doctor(self, user_name, name, contact_number, email, role, DOB, gender, address, start_year_of_practice,
-                      availability_hours, specialization, study_history, patients, password, Hospital):
+                      specialization, study_history, password, Hospital):
         hashed_password = password_hash(password)
         item = {
             "user_name": user_name,
@@ -26,15 +26,21 @@ class Doctor:
             "gender": gender,
             "address": address,
             "start_year_of_practice": start_year_of_practice,
-            "availability_hours": availability_hours,
+            "availability_hours": [],
             "specialization": specialization,
             "study_history": study_history,
-            "patients": patients,
+            "patients": [],
             "password": hashed_password,
             "Hospital": Hospital
         }
         response = self.table.put_item(Item=item)
         return response
+
+    @classmethod
+    def get_all_doctors(cls):
+        response = global_table.scan()
+        items = response.get('Items', [])
+        return [cls().deserialize(item) for item in items]
 
     @classmethod
     def get_doctor_by_username(cls, username):
