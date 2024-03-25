@@ -35,6 +35,12 @@ class Patient:
         return response
 
     @classmethod
+    def get_all_patients(cls):
+        response = global_table.scan()
+        items = response.get('Items', [])
+        return [cls().deserialize(item) for item in items]
+
+    @classmethod
     def get_patient_by_username(cls, username):
         response = global_table.query(
             KeyConditionExpression="user_name = :val",
@@ -59,7 +65,7 @@ class Patient:
             return item
 
     @classmethod
-    def update_doctors(cls, username, **kwargs):
+    def update_patient(cls, username, **kwargs):
         # Fetch the doctor object by username
         patient = cls.get_patient_by_username(username)
         if not patient:
