@@ -63,6 +63,9 @@ from app.resources.DoctorPatient import DoctorPatientResource
 from app.resources.getAllRecords import PatientAllResources, DoctorAllResources
 from app.resources.recorded_data import RecordedDataResource
 from app.resources.latest_record import LatestRecord
+from app.resources.timeSlots_resource import TimeSlots
+from app.resources.appointment_resource import AppointmentResource
+from app.resources.appointment_doctor_resource import AppointmentDoctorResource
 
 api.add_resource(PatientAllResources, '/api/patient')
 api.add_resource(DoctorAllResources, '/api/doctors')
@@ -80,4 +83,7 @@ api.add_resource(DynamoDBConnection, '/check_dynamodb_connection')
 api.add_resource(DoctorPatientResource, '/api/doctorpatientrelation')
 api.add_resource(RecordedDataResource, '/api/record-data/<username>')
 api.add_resource(LatestRecord, '/api/latest-record/<username>')
+api.add_resource(TimeSlots, '/api/time-slots/<username>')
+api.add_resource(AppointmentResource, '/api/book-appointment/<username>')
+api.add_resource(AppointmentDoctorResource, '/api/book-appointment/doctor/<doctor_username>')
 swagger = SwaggerApi(app, api_spec_url='/apidocs')
