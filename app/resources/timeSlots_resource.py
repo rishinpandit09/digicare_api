@@ -34,8 +34,14 @@ class TimeSlots(Resource):
         try:
             slots = TimeSlot.get_time_slots_by_doctor_username(username)
             if slots:
-                return slots
+                return {"data": slots}
             else:
                 abort(404, "Time slots not found for this doctor")
         except Exception as e:
             abort(500, "Internal Server Error")
+
+    def delete(self, username):
+        try:
+            TimeSlot.delete_all_time_slots()
+        except Exception as e:
+            return {'message': f'Error deleting Time Slot: {str(e)}'}, 500

@@ -30,7 +30,7 @@ class TimeSlot:
             current_datetime += interval
 
     @classmethod
-    def createTimeSlot(self,username, start_time,end_time, day_name):
+    def createTimeSlot(self, username, start_time,end_time, day_name):
 
         slots = self.generate_slot_start_times(start_time, end_time)
 
@@ -80,13 +80,34 @@ class TimeSlot:
     #     return time_slots
 
     @classmethod
-    def get_time_slots_by_doctor_username(cls, doctor_username):
+    def get_time_slots_by_doctor_username(cls, username):
         response = global_table.scan(
             FilterExpression='doctor_username = :val',
             ExpressionAttributeValues={
-                ':val': doctor_username
+                ':val': username
             }
         )
         items = response.get('Items', [])
-        slots = [cls.deserialize(item) for item in items]
-        return
+        return [cls().deserialize(item) for item in items]
+
+    @classmethod
+    def deserialize(cls, item):
+        if isinstance(item, dict):
+            return {key: cls.deserialize(value) for key, value in item.items()}
+        elif isinstance(item, list):
+            return [cls.deserialize(value) for value in item]
+        elif isinstance(item, decimal.Decimal):
+            return float(item)  # Convert Decimal to float
+        else:
+            return item
+
+    @classmethod
+    def delete_all_time_slots(cls):
+        response = global_table.scan()
+        items = response.get('Items', [])
+        for item in items:
+            key = {k['AttributeName']: item[k['AttributeName']] for k in global_table.key_schema}
+            print("Deleting item with key:", key)  # Debugging
+            global_table.delete_item(Key=key)
+        return [cls().deserialize(item) for item in items]
+
