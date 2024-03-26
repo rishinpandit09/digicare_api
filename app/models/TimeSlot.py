@@ -91,6 +91,18 @@ class TimeSlot:
         return [cls().deserialize(item) for item in items]
 
     @classmethod
+    def get_time_slots_by_doctor_username_day(cls, username, day):
+        response = global_table.scan(
+            FilterExpression='doctor_username = :val AND day_name = :day',
+            ExpressionAttributeValues={
+                ':val': username,
+                ':day': day
+            }
+        )
+        items = response.get('Items', [])
+        return [cls().deserialize(item) for item in items]
+
+    @classmethod
     def deserialize(cls, item):
         if isinstance(item, dict):
             return {key: cls.deserialize(value) for key, value in item.items()}

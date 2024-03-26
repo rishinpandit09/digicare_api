@@ -31,14 +31,26 @@ class TimeSlots(Resource):
                 return {'message': f'Error creating patient: {str(e)}'}, 500
 
     def get(self, username):
-        try:
-            slots = TimeSlot.get_time_slots_by_doctor_username(username)
-            if slots:
-                return {"data": slots}
-            else:
-                abort(404, "Time slots not found for this doctor")
-        except Exception as e:
-            abort(500, "Internal Server Error")
+
+        if request.json and 'day' in request.json:
+            try:
+               slots = TimeSlot.get_time_slots_by_doctor_username_day(username, request.json['day'])
+               if slots:
+                   return {"data": slots}
+               else:
+                   abort(404, "Time slots not found for this doctor")
+            except Exception as e:
+                abort(500, "Internal Server Error")
+
+        else:
+            try:
+                slots = TimeSlot.get_time_slots_by_doctor_username(username)
+                if slots:
+                    return {"data": slots}
+                else:
+                    abort(404, "Time slots not found for this doctor")
+            except Exception as e:
+                abort(500, "Internal Server Error")
 
     def delete(self, username):
         try:
