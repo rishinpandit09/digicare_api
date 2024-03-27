@@ -40,6 +40,12 @@ class RecordedData:
         return None
 
     @classmethod
+    def get_all_records(cls):
+        response = global_table.scan()
+        items = response.get('Items', [])
+        return [cls().deserialize(item) for item in items]
+
+    @classmethod
     def get_records_by_patient_username(cls, patient_username):
         response = global_table.scan(
             FilterExpression='patient_username = :val',

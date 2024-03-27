@@ -1,6 +1,6 @@
 from flask_restful import Resource, reqparse
 from flask_jwt_extended import jwt_required
-from flask import abort
+from flask import abort, request
 
 from app.models.appointment import Appointment
 
@@ -27,12 +27,31 @@ class AppointmentResource(Resource):
             return {'message': f'Error creating patient: {str(e)}'}, 500
 
     def get(self, username):
+        isAll = request.args.get("is_all")
+        try:
+            if isAll.lower().__eq__("true"):
+                appointments = Appointment.get_all_appointments()
+                if appointments:
+                    return appointments
+                else:
+                    return {"message": "Appointments are empty"}, 404
+            else:
+                appointments = Appointment.get_appointments_by_patient_username(username)
+                if appointments:
+                    return appointments
+                else:
+                    return {"message": "Appointments not found for this patient"}, 404
+        except Exception as e:
+            abort(500, "Internal Server Error")
+
+    def delete(self, username):
         try:
             appointments = Appointment.get_appointments_by_patient_username(username)
             if appointments:
-                return appointments
+                Appointment.delete_appointments(appointments)
+                return {"message": "Deleted All Appointments for username"}
             else:
-                abort(404, "Appointments not found for this patient")
+                return {"message": "No appointment were found for patient - " + username}, 404
         except Exception as e:
-            abort(500, "Internal Server Error")
+            abort(500, message=str(e))
 

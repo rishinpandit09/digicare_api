@@ -12,7 +12,7 @@ class LatestRecord(Resource):
             if record:
                 return {'data': record}
             else:
-                abort(404, message="Record not found")
+                return {'message': "Record not found"}
 
         except Exception as e:
             abort(500)
