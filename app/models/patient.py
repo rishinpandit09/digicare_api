@@ -30,7 +30,7 @@ class Patient:
             "DOB": DOB,
             "gender": gender,
             "address": address,
-            "doctors": doctors,
+            "doctors": [],
             "password": hashed_password,
             "room_id":record_id
         }
