@@ -33,7 +33,7 @@ class TimeSlot:
     def createTimeSlot(self, username, start_time,end_time, day_name):
 
         slots = self.generate_slot_start_times(start_time, end_time)
-
+        created_slots = []
         for slot_start_time in slots:
             item = {
                 "id": str(uuid.uuid4()),
@@ -43,6 +43,8 @@ class TimeSlot:
                 "doctor_username": username
             }
             response = global_table.put_item(Item=item)
+            created_slots.append(response)
+        return created_slots
 
     # @classmethod
     # def getTimeSlots(cls, doctor_username):

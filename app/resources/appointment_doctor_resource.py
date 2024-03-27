@@ -10,9 +10,6 @@ class AppointmentDoctorResource(Resource):
     def get(self, doctor_username):
         try:
             appointments = Appointment.get_appointments_by_doctor_username(doctor_username)
-            if appointments:
-                return appointments
-            else:
-                abort(404, message="Appointments not found for this patient")
+            return appointments
         except Exception as e:
-            abort(500, message="Internal Server Error")
+            abort(500)

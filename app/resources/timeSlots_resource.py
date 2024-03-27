@@ -25,13 +25,12 @@ class TimeSlots(Resource):
             try:
                 timeslot = TimeSlot()
                 timeslot.createTimeSlot(username, **args)
-                # return {'message': 'Time slot created successfully',
-                #     'data': args}
+                return {'message': 'Time slot created successfully',
+                    'data': args}
             except Exception as e:
                 return {'message': f'Error creating patient: {str(e)}'}, 500
 
     def get(self, username):
-
         if request.json and 'day' in request.json:
             try:
                slots = TimeSlot.get_time_slots_by_doctor_username_day(username, request.json['day'])

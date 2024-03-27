@@ -1,7 +1,13 @@
 import decimal, uuid
+import logging
 import os
+from datetime import datetime, timedelta
+
 import boto3
+from boto3.dynamodb.conditions import Key
 from boto3.dynamodb.types import TypeDeserializer
+from flask_restful import abort
+
 from app.models.patient import Patient
 
 aws_region = os.getenv('AWS_DEFAULT_REGION')
@@ -54,15 +60,19 @@ class Appointment:
 
     @classmethod
     def get_appointments_by_doctor_username(cls, doctor_username):
-        response = global_table.scan(
-            FilterExpression='doctor_username = :val',
-            ExpressionAttributeValues={
-                ':val': doctor_username
-            }
-        )
-        items = response.get('Items', [])
-        appointments = [cls.deserialize(item) for item in items]
-        return appointments
+        try:
+            response = global_table.scan(
+                FilterExpression='doctor_username = :val',
+                ExpressionAttributeValues={
+                    ':val': doctor_username
+                }
+            )
+            items = response.get('Items', [])
+            appointments = [cls.deserialize(item) for item in items]
+            return appointments
+        except Exception as e:
+            print(f"An error occurred while fetching appointments: {str(e)}")
+            abort(500)
 
     @classmethod
     def deserialize(cls, item):
@@ -107,3 +117,24 @@ class Appointment:
         )
         return response
 
+    @classmethod
+    def query_appointments(cls, doctor_username):
+        try:
+            # Get the current date
+            current_date = datetime.now().date()
+
+            # Query appointments for the specified doctor_username
+            response = global_table.scan(
+                FilterExpression='doctor_username = :val AND #date > :current_date',
+                ExpressionAttributeNames={'#date': 'date'},
+                ExpressionAttributeValues={
+                    ':val': doctor_username,
+                    ':current_date': current_date.strftime('%Y-%m-%d')
+                }
+            )
+            items = response.get('Items', [])
+            appointments = [cls.deserialize(item) for item in items]
+            return appointments
+        except Exception as e:
+            print(f"An error occurred while querying appointments: {str(e)}")
+            return []
