@@ -22,9 +22,9 @@ class Appointment:
         self.deserializer = TypeDeserializer()
 
     @classmethod
-    def create_appointment(cls, patient_username,date,doctor_username, day, time, description):
+    def create_appointment(cls, username,date,doctor_username, day, time, description):
 
-        patient_record = Patient.get_patient_by_username(patient_username)
+        patient_record = Patient.get_patient_by_username(username)
         if not patient_record:
          return {'message': 'Patient not found'}
 
@@ -35,7 +35,7 @@ class Appointment:
 
         item = {
             "id": str(uuid.uuid4()),
-            "patient_username": patient_username,
+            "patient_username": username,
             "doctor_username": doctor_username,
             "date": date,
             "day": day,
@@ -45,6 +45,13 @@ class Appointment:
         }
         response = global_table.put_item(Item=item)
         return response
+
+    @classmethod
+    def get_all_appointments(cls):
+        response = global_table.scan()
+        items = response.get('Items', [])
+        appointments = [cls.deserialize(item) for item in items]
+        return appointments
 
     @classmethod
     def get_appointments_by_patient_username(cls, patient_username):
@@ -73,6 +80,15 @@ class Appointment:
         except Exception as e:
             print(f"An error occurred while fetching appointments: {str(e)}")
             abort(500)
+
+    @classmethod
+    def delete_appointments(cls, appointments):
+        for item in appointments:
+            key = {k['AttributeName']: item[k['AttributeName']] for k in global_table.key_schema}
+            print("Deleting item with key:", key)  # Debugging
+            global_table.delete_item(Key=key)
+
+        return [cls().deserialize(item) for item in appointments]
 
     @classmethod
     def deserialize(cls, item):

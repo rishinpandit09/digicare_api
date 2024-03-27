@@ -40,46 +40,13 @@ class TimeSlot:
                 "start_time": slot_start_time,
                 "is_booked": False,
                 "day_name": day_name,
+                "parent_start_time": start_time,
+                "parent_end_time": end_time,
                 "doctor_username": username
             }
             response = global_table.put_item(Item=item)
             created_slots.append(response)
         return created_slots
-
-    # @classmethod
-    # def getTimeSlots(cls, doctor_username):
-    #     response = global_table.get_item(
-    #         Key={
-    #             "doctor_username": doctor_username
-    #         }
-    #     )
-    #     item = response.get('Item')
-    #     if item:
-    #         return cls(
-    #             id=item['id'],
-    #             start_time=item['start_time'],
-    #             is_booked=item['is_booked'],
-    #             day=item['day'],
-    #             doctor_username=item['doctor_username']
-    #         )
-    #     return None
-
-    # def getTimeSlots(cls, doctor_username):
-    #     response = global_table.query(
-    #         KeyConditionExpression=Key('doctor_username').eq(doctor_username)
-    #     )
-    #     items = response.get('Items')
-    #     time_slots = []
-    #     if items:
-    #         for item in items:
-    #             time_slots.append(cls(
-    #                 id=item['id'],
-    #                 start_time=item['start_time'],
-    #                 is_booked=item['is_booked'],
-    #                 day=item['day'],
-    #                 doctor_username=item['doctor_username']
-    #             ))
-    #     return time_slots
 
     @classmethod
     def get_time_slots_by_doctor_username(cls, username):
@@ -93,12 +60,12 @@ class TimeSlot:
         return [cls().deserialize(item) for item in items]
 
     @classmethod
-    def get_time_slots_by_doctor_username_day(cls, username, day):
+    def get_time_slots_by_doctor_username_day(cls, username, day_name):
         response = global_table.scan(
             FilterExpression='doctor_username = :val AND day_name = :day',
             ExpressionAttributeValues={
                 ':val': username,
-                ':day': day
+                ':day': day_name
             }
         )
         items = response.get('Items', [])
@@ -124,4 +91,13 @@ class TimeSlot:
             print("Deleting item with key:", key)  # Debugging
             global_table.delete_item(Key=key)
         return [cls().deserialize(item) for item in items]
+
+    @classmethod
+    def delete_time_slots(cls, time_slots):
+        for item in time_slots:
+            key = {k['AttributeName']: item[k['AttributeName']] for k in global_table.key_schema}
+            print("Deleting item with key:", key)  # Debugging
+            global_table.delete_item(Key=key)
+
+        return [cls().deserialize(item) for item in time_slots]
 

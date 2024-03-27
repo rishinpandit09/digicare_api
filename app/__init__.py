@@ -60,7 +60,7 @@ from app.resources.alert_resource import AlertResource
 from app.resources.teleconsultation_resource import TeleconsultationResource
 from app.resources.health_record_resource import HealthRecordResource
 from app.resources.DoctorPatient import DoctorPatientResource
-from app.resources.getAllRecords import PatientAllResources, DoctorAllResources
+from app.resources.getAllRecords import PatientAllResources, DoctorAllResources, AllRecordedDataResource
 from app.resources.recorded_data import RecordedDataResource
 from app.resources.latest_record import LatestRecord
 from app.resources.timeSlots_resource import TimeSlots
@@ -69,6 +69,7 @@ from app.resources.appointment_doctor_resource import AppointmentDoctorResource
 
 api.add_resource(PatientAllResources, '/api/patient')
 api.add_resource(DoctorAllResources, '/api/doctors')
+api.add_resource(AllRecordedDataResource, '/api/all-record-data')
 api.add_resource(PatientResource, '/api/patient/<username>')
 api.add_resource(DoctorResource, '/api/doctor/<username>')
 api.add_resource(AlertResource, '/api/alert')
@@ -88,3 +89,4 @@ api.add_resource(AppointmentResource, '/api/book-appointment/<username>')
 api.add_resource(AppointmentDoctorResource, '/api/book-appointment/doctor/<doctor_username>')
 api.add_resource(GetAvailTimeSlot,'/api/avail-doc-appointment/<doctor_username>')
 swagger = SwaggerApi(app, api_spec_url='/apidocs')
+

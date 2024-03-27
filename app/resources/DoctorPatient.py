@@ -45,16 +45,16 @@ class DoctorPatientResource(Resource):
             if doctor is not None and patient is not None:
                 # Remove the patient from the list of patients
                 patients = doctor.get('patients', [])
-                patient = args['patient_username']
-                if patient in patients:
-                    patients.remove(patient)
+                patient_username = args['patient_username']
+                if patient_username in patients:
+                    patients.remove(patient_username)
                     # Update the doctor record with the updated list of patients
                     doctor_response = Doctor.update_doctor(args["doctor_username"], patients=patients)
                 # Remove the doctor from the list of doctor
                 doctors = patient.get('doctors', [])
-                doctor = args['doctor_username']
-                if doctor in doctors:
-                    doctors.remove(doctor)
+                doctor_username = args['doctor_username']
+                if doctor_username in doctors:
+                    doctors.remove(doctor_username)
                     # Update the patient record with the updated list of doctors
                     patient_response = Patient.update_patient(args['patient_username'], doctors=doctors)
                 return {'message': 'Patient and Doctor are unlinked successfully!'}
