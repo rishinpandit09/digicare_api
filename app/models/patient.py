@@ -1,5 +1,6 @@
 import decimal
 import os
+from uuid import uuid4
 
 import boto3
 from boto3.dynamodb.types import TypeDeserializer
@@ -18,6 +19,7 @@ class Patient:
 
     def create_patient(self, user_name, name, contact_number, email, role, DOB,
                        gender, address, doctors, password):
+        record_id= str(uuid4())
         hashed_password = password_hash(password)
         item = {
             "user_name": user_name,
@@ -29,7 +31,8 @@ class Patient:
             "gender": gender,
             "address": address,
             "doctors": doctors,
-            "password": hashed_password
+            "password": hashed_password,
+            "room_id":record_id
         }
         response = global_table.put_item(Item=item)
         return response
@@ -92,3 +95,15 @@ class Patient:
             # Handle any exceptions that may occur during the database operation
             return {'message': 'Failed to update patient', 'error': str(e)}
 
+    @classmethod
+    def get_room_id_by_username(cls, username):
+        response = global_table.query(
+            KeyConditionExpression="user_name = :val",
+            ExpressionAttributeValues={
+                ":val": username
+            }
+        )
+        items = response.get('Items', [])
+        if items:
+            return items[0].get('room_id')
+        return None
