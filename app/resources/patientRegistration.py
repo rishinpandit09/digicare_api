@@ -17,6 +17,8 @@ class PatientRegistration(Resource):
         args = parser.parse_args()
 
         try:
+            if Patient.get_patient_by_username(args['user_name']):
+                return {'message': 'Username already exists'}, 400
             new_patient = Patient()
             response = new_patient.create_patient(**args)
             return {'message': 'Patient created successfully', 'data': response}, 201
