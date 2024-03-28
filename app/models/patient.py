@@ -18,7 +18,7 @@ class Patient:
         self.deserializer = TypeDeserializer()
 
     def create_patient(self, user_name, name, contact_number, email, role, DOB,
-                       gender, address, doctors, password):
+                       gender, address, password):
         record_id= str(uuid4())
         hashed_password = password_hash(password)
         item = {
@@ -32,7 +32,7 @@ class Patient:
             "address": address,
             "doctors": [],
             "password": hashed_password,
-            "room_id":record_id
+            "room_id": record_id,
         }
         response = global_table.put_item(Item=item)
         return response
