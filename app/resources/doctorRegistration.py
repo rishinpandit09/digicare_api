@@ -3,6 +3,7 @@ from flask import request
 from app.models.doctor import Doctor
 
 
+
 class DoctorRegistration(Resource):
     def post(self):
         parser = reqparse.RequestParser()
@@ -24,6 +25,8 @@ class DoctorRegistration(Resource):
         args = request.get_json()
 
         try:
+            if Doctor.get_doctor_by_username(args['user_name']):
+                return {'message': 'Username already exists'}, 400
             new_doctor = Doctor()
             response = new_doctor.create_doctor(**args)
             return {'message': 'Doctor created successfully', 'data': response}, 201
