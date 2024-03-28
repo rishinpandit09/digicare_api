@@ -66,6 +66,7 @@ from app.resources.latest_record import LatestRecord
 from app.resources.timeSlots_resource import TimeSlots
 from app.resources.appointment_resource import AppointmentResource
 from app.resources.appointment_doctor_resource import AppointmentDoctorResource
+from app.resources.adminLogin import AdminLogin
 
 api.add_resource(PatientAllResources, '/api/patient')
 api.add_resource(DoctorAllResources, '/api/doctors')
@@ -88,5 +89,6 @@ api.add_resource(TimeSlots, '/api/time-slots/<username>')
 api.add_resource(AppointmentResource, '/api/book-appointment/<username>')
 api.add_resource(AppointmentDoctorResource, '/api/book-appointment/doctor/<doctor_username>')
 api.add_resource(GetAvailTimeSlot,'/api/avail-doc-appointment/<doctor_username>')
+api.add_resource(AdminLogin, '/api/admin-login')
 swagger = SwaggerApi(app, api_spec_url='/apidocs')
 
