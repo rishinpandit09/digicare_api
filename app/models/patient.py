@@ -17,7 +17,7 @@ class Patient:
         self.deserializer = TypeDeserializer()
 
     def create_patient(self, user_name, name, contact_number, email, role, DOB,
-                       gender, address, doctors, password):
+                       gender, address, password):
         hashed_password = password_hash(password)
         item = {
             "user_name": user_name,
@@ -28,7 +28,7 @@ class Patient:
             "DOB": DOB,
             "gender": gender,
             "address": address,
-            "doctors": doctors,
+            "doctors": [],
             "password": hashed_password
         }
         response = global_table.put_item(Item=item)
