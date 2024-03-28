@@ -18,7 +18,7 @@ class Patient:
         self.deserializer = TypeDeserializer()
 
     def create_patient(self, user_name, name, contact_number, email, role, DOB,
-                       gender, address, doctors, password):
+                       gender, address, password):
         record_id= str(uuid4())
         hashed_password = password_hash(password)
         item = {
