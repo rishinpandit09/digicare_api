@@ -2,8 +2,6 @@ from flask_restful import Resource, reqparse
 from flask import abort, request
 from app.models.record import RecordedData
 from uuid import uuid4
-# from simulation import HealthRecorder
-# import tkinter as tk
 
 
 class RecordedDataResource(Resource):
@@ -32,7 +30,7 @@ class RecordedDataResource(Resource):
             record_id = str(uuid4())
             new_record = RecordedData()
             response = new_record.create_record(record_id, **args)
-            # return {'message': 'Record created successfully', 'data': response}
+            return {'message': 'Record created successfully', 'data': response}
         except Exception as e:
             abort(500, message=str(e))
 
